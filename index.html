@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Hình học 9: Trụ - Nón - Cầu</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #f0f4f8; margin: 0; padding: 10px; color: #333; }
+        .wrapper { max-width: 680px; margin: 10px auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: #1e3799; margin-top: 5px; font-size: 1.4rem; }
+        .grid-nav { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
+        .btn-nav { padding: 10px 5px; border: 1px solid #dcdde1; background: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #2f3640; transition: all 0.2s; }
+        .btn-nav.current { border: 2px solid #1e3799; background: #f5f6fa; }
+        .btn-nav.right { background: #4cd137 !important; color: #fff !important; border: none; }
+        .btn-nav.wrong { background: #e84118 !important; color: #fff !important; border: none; }
+        .q-container { background: #f8f9fa; border-left: 4px solid #1e3799; padding: 12px; margin-bottom: 15px; font-weight: 600; font-size: 1.05rem; line-height: 1.5; }
+        .opt-item { padding: 12px 15px; border: 1px solid #dcdde1; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-size: 1rem; background: #fff; transition: background 0.2s; display: flex; align-items: center; }
+        .opt-item:hover { background: #f5f6fa; }
+        .ans-right { background: #d4edda !important; border-color: #c3e6cb !important; color: #155724; font-weight: bold; }
+        .ans-wrong { background: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; }
+        .explain-box { margin-top: 15px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; display: none; line-height: 1.6; font-size: 0.95rem; }
+        .btn-control { width: 100%; padding: 12px; margin-top: 10px; background: #1e3799; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; display: none; }
+        .btn-control:hover { background: #0c2461; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h2>Trắc nghiệm: Hình Trụ - Nón - Cầu</h2>
+    <div class="grid-nav" id="gridNav"></div>
+    
+    <div class="q-container" id="questionText"></div>
+    <div id="optionsContainer"></div>
+    
+    <div class="explain-box" id="explainBox"></div>
+    <button class="btn-control" id="nextBtn" onclick="goToNext()">Câu Tiếp Theo ❯</button>
+</div>
+
+<script>
+const dataQuiz = [
+    {
+        q: "Hộp sữa có dạng hình trụ tròn với đường kính đáy là $8\\text{ cm}$, chiều cao của hộp sữa là $20\\text{ cm}$. Thể tích của hộp sữa bằng:",
+        o: ["$160\\pi\\text{ cm}^3$", "$64\\pi\\text{ cm}^3$", "$320\\pi\\text{ cm}^3$", "$80\\pi\\text{ cm}^3$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Tìm bán kính đáy $r$: Vì đường kính đáy là $8\\text{ cm}$ nên bán kính $r = 8 : 2 = 4\\text{ cm}$.<br>2. Áp dụng công thức tính thể tích hình trụ: $V = \\pi r^2 h$.<br>3. Thay số vào: $V = \\pi \\cdot 4^2 \\cdot 20 = \\pi \\cdot 16 \\cdot 20 = 320\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Một hình trụ có chiều cao là $25\\text{ cm}$ và diện tích xung quanh là $1200\\pi\\text{ cm}^2$. Thể tích của hình trụ đó là:",
+        o: ["$30000\\pi\\text{ cm}^3$", "$14400\\pi\\text{ cm}^3$", "$2400\\pi\\text{ cm}^3$", "$2354\\pi\\text{ cm}^3$"],
+        c: 1,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức diện tích xung quanh hình trụ: $S_{xq} = 2\\pi rh$.<br>2. Thay $S_{xq} = 1200\\pi$ và $h = 25$ để tìm bán kính $r$:<br>$1200\\pi = 2\\pi \\cdot r \\cdot 25 \\Rightarrow 1200\\pi = 50\\pi \\cdot r \\Rightarrow r = 1200 : 50 = 24\\text{ cm}$.<br>3. Tính thể tích hình trụ: $V = \\pi r^2 h = \\pi \\cdot 24^2 \\cdot 25 = \\pi \\cdot 576 \\cdot 25 = 14400\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án B."
+    },
+    {
+        q: "Nhấn chìm hoàn toàn một khối sắt nhỏ vào một lọ thủy tinh có dạng hình trụ. Diện tích đáy lọ thủy tinh là $12,8\\text{ cm}^2$. Nước trong lọ dâng lên thêm $8,5\\text{ mm}$. Khi đó thể tích khối sắt gần bằng:",
+        o: ["$10,9\\text{ cm}^3$", "$21,3\\text{ cm}^3$", "$109\\text{ cm}^3$", "$213\\text{ cm}^3$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Thể tích khối sắt chính bằng thể tích phần nước dâng lên trong lòng hình trụ.<br>2. Đổi đơn vị chiều cao dâng lên ($h$) sang cm: $h = 8,5\\text{ mm} = 0,85\\text{ cm}$.<br>3. Thể tích nước dâng lên là: $V = S_{đáy} \\cdot h = 12,8 \\cdot 0,85 = 10,88\\text{ cm}^3$. làm tròn thành $10,9\\text{ cm}^3$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Tính thể tích $V$ của hình cầu có bán kính $R = 3\\text{ cm}$.",
+        o: ["$V = 180\\pi\\text{ cm}^3$", "$V = 9\\pi\\text{ cm}^3$", "$V = 72\\pi\\text{ cm}^3$", "$V = 36\\pi\\text{ cm}^3$"],
+        c: 3,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức tính thể tích hình cầu là: $V = \\frac{4}{3}\\pi R^3$.<br>2. Thay $R = 3$ vào công thức: $V = \\frac{4}{3}\\pi \\cdot 3^3 = \\frac{4}{3}\\pi \\cdot 27 = 4 \\cdot 9 \\cdot \\pi = 36\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án D."
+    },
+    {
+        q: "Một hình trụ có bán kính đáy là $3$ và chiều cao là $8$ thì thể tích của hình trụ là:",
+        o: ["$48\\pi$", "$72\\pi$", "$24\\pi$", "$198\\pi$"],
+        c: 1,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức tính thể tích hình trụ: $V = \\pi r^2 h$.<br>2. Thay $r = 3$ và $h = 8$ vào: $V = \\pi \\cdot 3^2 \\cdot 8 = \\pi \\cdot 9 \\cdot 8 = 72\\pi$.<br>👉 Chọn đáp án II (B)."
+    },
+    {
+        q: "Một hình trụ có diện tích đáy và diện tích xung quanh đều bằng $100\\pi$ thì thể tích của hình trụ này là:",
+        o: ["$500\\pi$", "$1000\\pi$", "$100\\pi^2$", "$100\\pi\\sqrt{10}$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Diện tích đáy $S_{đáy} = \\pi r^2 = 100\\pi \\Rightarrow r^2 = 100 \\Rightarrow r = 10$.<br>2. Diện tích xung quanh $S_{xq} = 2\\pi rh = 100\\pi$. Thay $r = 10$ vào ta được:<br>$2\\pi \\cdot 10 \\cdot h = 100\\pi \\Rightarrow 20\\pi \\cdot h = 100\\pi \\Rightarrow h = 100 : 20 = 5$.<br>3. Tính thể tích hình trụ: $V = S_{đáy} \\cdot h = 100\\pi \\cdot 5 = 500\\pi$.<br>👉 Chọn đáp án I (A)."
+    },
+    {
+        q: "Một bể nước hình trụ có sức chứa $1620\\pi\\text{ (l)}$. Chiều cao của bể là $20\\text{ (dm)}$. Kết quả nào sau đây là diện tích xung quanh của bể?",
+        o: ["$360\\pi\\text{ (dm}^2)$", "$180\\pi\\text{ (dm}^2)$", "$360\\text{ (dm}^2)$", "$180\\text{ (dm}^2)$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Đổi đơn vị sức chứa: $1620\\pi\\text{ lít} = 1620\\pi\\text{ dm}^3$ (vì $1\\text{ lít} = 1\\text{ dm}^3$). Vậy thể tích $V = 1620\\pi$.<br>2. Từ công thức $V = \\pi r^2 h$, tìm bán kính $r$:<br>$1620\\pi = \\pi \\cdot r^2 \\cdot 20 \\Rightarrow r^2 = 1620 : 20 = 81 \\Rightarrow r = 9\\text{ dm}$.<br>3. Tính diện tích xung quanh của bể: $S_{xq} = 2\\pi rh = 2\\pi \\cdot 9 \\cdot 20 = 360\\pi\\text{ dm}^2$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Một hình trụ có bán kính đáy $r = 3$, chiều cao $h = 4$. Diện tích xung quanh của hình trụ là:",
+        o: ["$24\\pi$", "$12\\pi$", "$36\\pi$", "$42\\pi$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Áp dụng công thức diện tích xung quanh hình trụ: $S_{xq} = 2\\pi rh$.<br>2. Thay số vào: $S_{xq} = 2\\pi \\cdot 3 \\cdot 4 = 24\\pi$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Một hình trụ có bán kính đáy $r = 3$, chiều cao $h = 5$. Thể tích của hình trụ là:",
+        o: ["$45\\pi$", "$30\\pi$", "$15\\pi$", "$48\\pi$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức tính thể tích hình trụ: $V = \\pi r^2 h$.<br>2. Thay số vào: $V = \\pi \\cdot 3^2 \\cdot 5 = \\pi \\cdot 9 \\cdot 5 = 45\\pi$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Một hình trụ có diện tích xung quanh là $24\\pi$, chiều cao $h = 4$. Bán kính đáy hình trụ là:",
+        o: ["$4$", "$\\sqrt{6}$", "$6$", "$3$"],
+        c: 3,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức diện tích xung quanh hình trụ: $S_{xq} = 2\\pi rh$.<br>2. Thay $S_{xq} = 24\\pi$ và $h = 4$ vào: $24\\pi = 2\\pi \\cdot r \\cdot 4 \\Rightarrow 24\\pi = 8\\pi \\cdot r$.<br>3. Tìm $r$: $r = 24\\pi : 8\\pi = 3$.<br>👉 Chọn đáp án D."
+    },
+    {
+        q: "Một hình trụ có chiều cao $h = 12$, bán kính đáy bằng $\\frac{1}{3}$ chiều cao. Diện tích toàn phần của hình trụ là:",
+        o: ["$128\\pi$", "$96\\pi$", "$32\\pi$", "$24\\pi$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Tính bán kính đáy $r$: $r = \\frac{1}{3} \\cdot h = \\frac{1}{3} \\cdot 12 = 4$.<br>2. Công thức tính diện tích toàn phần hình trụ: $S_{tp} = 2\\pi rh + 2\\pi r^2$.<br>3. Thay số vào: $S_{tp} = 2\\pi \\cdot 4 \\cdot 12 + 2\\pi \\cdot 4^2 = 96\\pi + 32\\pi = 128\\pi$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Một hình trụ có thể tích bằng $54\\pi$, chiều cao bằng đường kính đáy. Bán kính đáy hình trụ là:",
+        o: ["$6$", "$3\\pi$", "$\\sqrt[3]{27}$", "$3$"],
+        c: 3,
+        s: "<b>Hướng dẫn giải:</b><br>1. Vì chiều cao bằng đường kính đáy nên ta có: $h = 2r$.<br>2. Thay $h = 2r$ vào công thức tính thể tích $V = \\pi r^2 h$:<br>$V = \\pi r^2 \\cdot (2r) = 2\\pi r^3$.<br>3. Đề bài cho $V = 54\\pi$, ta có: $2\\pi r^3 = 54\\pi \\Rightarrow r^3 = 54 : 2 = 27 \\Rightarrow r = 3$.<br>👉 Chọn đáp án D."
+    },
+    {
+        q: "Diện tích xung quanh của một hình nón có đường kính đáy $6\\text{ cm}$, chiều cao là $4\\text{ cm}$ là:",
+        o: ["$30\\pi\\text{ cm}^2$", "$24\\pi\\text{ cm}^2$", "$15\\pi\\text{ cm}^2$", "$12\\pi\\text{ cm}^2$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Tìm bán kính đáy $r$: Đường kính bằng $6\\text{ cm} \\Rightarrow r = 6 : 2 = 3\\text{ cm}$.<br>2. Áp dụng định lý Pytago tìm đường sinh $l$: $l = \\sqrt{r^2 + h^2} = \\sqrt{3^2 + 4^2} = \\sqrt{25} = 5\\text{ cm}$.<br>3. Diện tích xung quanh hình nón: $S_{xq} = \\pi rl = \\pi \\cdot 3 \\cdot 5 = 15\\pi\\text{ cm}^2$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Diện tích xung quanh của một hình nón có chiều cao $12$ đường sinh $13$ là:",
+        o: ["$130\\pi$", "$65\\pi$", "$60\\pi$", "$325\\pi$"],
+        c: 1,
+        s: "<b>Hướng dẫn giải:</b><br>1. Tìm bán kính đáy $r$ bằng định lý Pytago trong tam giác vuông: $r = \\sqrt{l^2 - h^2} = \\sqrt{13^2 - 12^2} = \\sqrt{169 - 144} = \\sqrt{25} = 5$.<br>2. Tính diện tích xung quanh hình nón: $S_{xq} = \\pi rl = \\pi \\cdot 5 \\cdot 13 = 65\\pi$.<br>👉 Chọn đáp án B."
+    },
+    {
+        q: "Một hình nón có diện tích toàn phần là $27\\pi\\text{ cm}^2$, biết đường sinh bằng đường kính đáy. Bán kính đáy của hình nón là:",
+        o: ["$\\sqrt{3}$", "$6$", "$3$", "$2\\sqrt{3}$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Đường sinh bằng đường kính đáy nên: $l = 2r$.<br>2. Công thức diện tích toàn phần hình nón: $S_{tp} = \\pi rl + \\pi r^2$.<br>3. Thay $l = 2r$ vào công thức: $S_{tp} = \\pi \\cdot r \\cdot (2r) + \\pi r^2 = 2\\pi r^2 + \\pi r^2 = 3\\pi r^2$.<br>4. Theo bài ra: $3\\pi r^2 = 27\\pi \\Rightarrow r^2 = 9 \\Rightarrow r = 3\\text{ cm}$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Một hình nón có chiều cao là $4\\text{ cm}$, đường sinh là $5\\text{ cm}$. Thể tích của hình nón đó là:",
+        o: ["$36\\pi\\text{ cm}^3$", "$\\frac{80}{3}\\pi\\text{ cm}^3$", "$12\\pi\\text{ cm}^3$", "$15\\pi\\text{ cm}^3$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Áp dụng định lý Pytago tính bán kính đáy $r$: $r = \\sqrt{l^2 - h^2} = \\sqrt{5^2 - 4^2} = \\sqrt{25 - 16} = 3\\text{ cm}$.<br>2. Công thức tính thể tích hình nón: $V = \\frac{1}{3}\\pi r^2 h$.<br>3. Thay số vào: $V = \\frac{1}{3}\\pi \\cdot 3^2 \\cdot 4 = \\frac{1}{3}\\pi \\cdot 9 \\cdot 4 = 12\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Một hình nón có chu vi đáy $16\\pi\\text{ cm}$, chiều cao là $6\\text{ cm}$. Độ dài đường sinh là:",
+        o: ["$9\\text{cm}$", "$10,5\\text{cm}$", "$10\\text{cm}$", "$12\\text{cm}$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức chu vi đáy hình tròn: $C = 2\\pi r$.<br>2. Theo đề bài: $2\\pi r = 16\\pi \\Rightarrow r = 8\\text{ cm}$.<br>3. Áp dụng định lý Pytago tính đường sinh $l$: $l = \\sqrt{r^2 + h^2} = \\sqrt{8^2 + 6^2} = \\sqrt{64 + 36} = \\sqrt{100} = 10\\text{ cm}$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Diện tích mặt cầu có bán kính $3\\text{ cm}$ là:",
+        o: ["$36\\pi\\text{ cm}^2$", "$9\\pi\\text{ cm}^2$", "$6\\pi\\text{ cm}^2$", "$24\\pi\\text{ cm}^2$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức diện tích mặt cầu: $S = 4\\pi R^2$.<br>2. Thay số với $R = 3$: $S = 4\\pi \\cdot 3^2 = 4\\pi \\cdot 9 = 36\\pi\\text{ cm}^2$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Thể tích của hình cầu có bán kính là $3\\text{ cm}$ là:",
+        o: ["$27\\pi\\text{ cm}^3$", "$24\\pi\\text{ cm}^3$", "$36\\pi\\text{ cm}^3$", "$12\\pi\\text{ cm}^3$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức tính thể tích hình cầu: $V = \\frac{4}{3}\\pi R^3$.<br>2. Thay $R = 3$ vào công thức: $V = \\frac{4}{3}\\pi \\cdot 3^3 = \\frac{4}{3}\\pi \\cdot 27 = 4\\pi \\cdot 9 = 36\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Bán kính của một hình cầu có diện tích mặt cầu $100\\pi\\text{ cm}^2$ là:",
+        o: ["$3\\text{ cm}$", "$8\\text{ cm}$", "$5\\text{ cm}$", "$10\\text{ cm}$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức diện tích mặt cầu: $S = 4\\pi R^2$.<br>2. Theo đề bài: $4\\pi R^2 = 100\\pi \\Rightarrow R^2 = 100 : 4 = 25$.<br>3. Tìm $R$: $R = \\sqrt{25} = 5\\text{ cm}$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Hình cầu có đường kính $6\\text{ cm}$. Thể tích của nó là:",
+        o: ["$27\\pi\\text{ cm}^3$", "$36\\pi\\text{ cm}^3$", "$24\\pi\\text{ cm}^3$", "$12\\pi\\text{ cm}^3$"],
+        c: 1,
+        s: "<b>Hướng dẫn giải:</b><br>1. Tìm bán kính mặt cầu $R$: Đường kính bằng $6\\text{ cm} \\Rightarrow R = 6 : 2 = 3\\text{ cm}$.<br>2. Thể tích hình cầu: $V = \\frac{4}{3}\\pi R^3 = \\frac{4}{3}\\pi \\cdot 3^3 = 36\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án B."
+    },
+    {
+        q: "Một quả bóng bàn có đường kính đường tròn lớn là $4\\text{ cm}$ thì diện tích bề mặt quả bóng là:",
+        o: ["$16\\pi$", "$8\\pi$", "$4\\pi$", "$\\frac{32}{3}\\pi$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Đường tròn lớn của quả bóng bàn có đường kính $d = 4\\text{ cm}$, suy ra bán kính quả bóng $R = 4 : 2 = 2\\text{ cm}$.<br>2. Diện tích bề mặt quả bóng bàn (diện tích mặt cầu): $S = 4\\pi R^2$.<br>3. Thay số: $S = 4\\pi \\cdot 2^2 = 4\\pi \\cdot 4 = 16\\pi\\text{ cm}^2$.<br>👉 Chọn đáp án A."
+    },
+    {
+        q: "Một quả bóng đá có đường kính đường tròn lớn là $4\\text{ dm}$. Diện tích da dùng để may quả bóng đó là (lấy gần đúng tới 2 chữ số thập phân, $\\pi \\approx 3,14$ và không kể đường may):",
+        o: ["$50,24\\text{ dm}^2$", "$12,56\\text{ dm}^2$", "$25,12\\text{ dm}^2$", "$33,49\\text{ dm}^2$"],
+        c: 0,
+        s: "<b>Hướng dẫn giải:</b><br>1. Bán kính quả bóng đá: $R = 4 : 2 = 2\\text{ dm}$.<br>2. Diện tích da cần dùng chính là diện tích mặt cầu: $S = 4\\pi R^2$.<br>3. Thay số vào: $S = 4 \\cdot 3,14 \\cdot 2^2 = 4 \\cdot 3,14 \\cdot 4 = 16 \\cdot 3,14 = 50,24\\text{ dm}^2$.<br>👉 Chọn đáp án I (A)."
+    },
+    {
+        q: "Nhúng một vật hình cầu có bán kính $3\\text{ cm}$ vào một chậu nước đầy sao cho vật đó ngập hoàn toàn trong nước. Thể tích lượng nước tràn ra khỏi chậu là:",
+        o: ["$\\frac{36}{3}\\pi\\text{ (cm}^3)$", "$64\\pi\\text{ (cm}^3)$", "$36\\pi\\text{ (cm}^3)$", "$9\\pi\\text{ (cm}^3)$"],
+        c: 2,
+        s: "<b>Hướng dẫn giải:</b><br>1. Thể tích lượng nước tràn ra ngoài chính bằng thể tích của vật hình cầu bị chìm vào.<br>2. Áp dụng công thức tính thể tích hình cầu: $V = \\frac{4}{3}\\pi R^3$.<br>3. Thay số với $R = 3$: $V = \\frac{4}{3}\\pi \\cdot 3^3 = 36\\pi\\text{ cm}^3$.<br>👉 Chọn đáp án C."
+    },
+    {
+        q: "Khi tăng bán kính đáy lên $6$ lần và giảm chiều cao của hình trụ đi $4$ lần thì thể tích hình trụ tăng:",
+        o: ["$\\frac{3}{2}\\text{ lần}$", "$3\\text{ lần}$", "$\\frac{9}{2}\\text{ lần}$", "$9\\text{ lần}$"],
+        c: 3,
+        s: "<b>Hướng dẫn giải:</b><br>1. Công thức tính thể tích hình trụ ban đầu: $V_1 = \\pi r^2 h$.<br>2. Khi thay đổi: Bán kính mới là $6r$, chiều cao mới là $\\frac{h}{4}$.<br>3. Thể tích mới là: $V_2 = \\pi \\cdot (6r)^2 \\cdot \\frac{h}{4} = \\pi \\cdot 36r^2 \\cdot \\frac{h}{4} = 9 \\cdot (\\pi r^2 h) = 9 \\cdot V_1$.<br>4. Như vậy, thể tích hình trụ tăng lên $9$ lần.<br>👉 Chọn đáp án D."
+    }
+];
+
+let currentIndex = 0;
+let userAnswers = new Array(dataQuiz.length).fill(null);
+
+function initializeQuiz() {
+    const nav = document.getElementById('gridNav');
+    dataQuiz.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-nav';
+        btn.id = `nav-${i}`;
+        btn.innerText = i + 1;
+        btn.onclick = () => showQuestion(i);
+        nav.appendChild(btn);
+    });
+    showQuestion(0);
+}
+
+function showQuestion(index) {
+    currentIndex = index;
+    
+    // Cập nhật trạng thái active trên bảng câu hỏi
+    const allBtns = document.getElementsByClassName('btn-nav');
+    for (let btn of allBtns) btn.classList.remove('current');
+    document.getElementById(`nav-${index}`).classList.add('current');
+    
+    // Đã thay đổi đổi từ .innerText sang .innerHTML để kích hoạt渲染 công thức
+    document.getElementById('questionText').innerHTML = `Câu ${index + 1}: ` + dataQuiz[index].q;
+    
+    const optBox = document.getElementById('optionsContainer');
+    optBox.innerHTML = '';
+    
+    dataQuiz[index].o.forEach((optionText, i) => {
+        const div = document.createElement('div');
+        div.className = 'opt-item';
+        div.innerHTML = optionText; // Dùng innerHTML cho các phương án trắc nghiệm
+        
+        if (userAnswers[index] !== null) {
+            if (i === dataQuiz[index].c) {
+                div.classList.add('ans-right');
+            } else if (i === userAnswers[index]) {
+                div.classList.add('ans-wrong');
+            }
+        } else {
+            div.onclick = () => selectOption(i);
+        }
+        optBox.appendChild(div);
+    });
+    
+    const explainBox = document.getElementById('explainBox');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (userAnswers[index] !== null) {
+        explainBox.innerHTML = dataQuiz[index].s; // Dùng innerHTML cho phần giải thích
+        explainBox.style.display = 'block';
+        if (index < dataQuiz.length - 1) nextBtn.style.display = 'block';
+        else nextBtn.style.display = 'none';
+    } else {
+        explainBox.style.display = 'none';
+        nextBtn.style.display = 'none';
+    }
+    
+    // Ép MathJax xử lý và vẽ lại công thức sau khi nạp HTML mới
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+    }
+}
+
+function selectOption(selectedIndex) {
+    userAnswers[currentIndex] = selectedIndex;
+    const correctIdx = dataQuiz[currentIndex].c;
+    const navBtn = document.getElementById(`nav-${currentIndex}`);
+    
+    if (selectedIndex === correctIdx) {
+        navBtn.classList.add('right');
+    } else {
+        navBtn.classList.add('wrong');
+    }
+    
+    showQuestion(currentIndex);
+}
+
+function goToNext() {
+    if (currentIndex < dataQuiz.length - 1) {
+        showQuestion(currentIndex + 1);
+    }
+}
+
+window.onload = initializeQuiz;
+</script>
+
+</body>
+</html>
